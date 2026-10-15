@@ -2,3 +2,5 @@
 .venv/
 __pycache__/
 results.csv
+.DS_Store
+/evaluation/
