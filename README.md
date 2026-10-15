@@ -280,7 +280,9 @@ recover a claim missing from the extracted representation.
 
 ### Task 3: Reflection on AI paradoxes
 
-![The missing layer of trust: an exploded view separates the visible MSc claim, extracted BSc text and actual MCP evidence, connecting false acceptance with efficiency, shared blind spots and oversight.](assets/task3_ai_paradoxes.png)
+![The missing layer of trust: an exploded view separates the visible MSc claim, extracted BSc text and actual MCP evidence, connecting false acceptance with efficiency, shared blind spots and oversight.](task3_reflection.png)
+
+*Figure 1. Task 3 visual reflection: efficiency, shared blind spots and oversight in AI CV verification.*
 
 My main takeaway is that AI has two sides: it can make verification more
 efficient, while also making it easier to create misleading material. The
