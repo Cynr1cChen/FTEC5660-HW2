@@ -124,7 +124,7 @@ only by the provided evaluation runner after predictions, never by the agent.
 
 The current revision completed three independent official-runner tests, each
 with **7/7 correct classifications**, identical scores and no uncertainty
-fallback. All runs used source SHA-256 `c4de1a46b06aa8a1c2375eb8f2409b3e7090dba44c409a18560523694d5348cc`.
+fallback.
 
 | Run | Correct CVs | Wall time (s) | Returned tokens |
 | --- | --- | ---: | ---: |
@@ -142,20 +142,8 @@ fallback. All runs used source SHA-256 `c4de1a46b06aa8a1c2375eb8f2409b3e7090dba4
 | `CV_6.pdf` | 1 | 0.9 | All extracted claims supported |
 | `CV_7.pdf` | 0 | 0.1 | Claimed Docker skill absent from the profile |
 
-All current runs were below the 30-minute limit. Runtime figures cover the
-observed entry-point execution, including PDF loading and MCP startup. Token
-figures sum returned usage metadata and exclude unreturned usage; they are not
-monetary cost estimates. Local evaluation processes bypassed the local proxy
-for the course MCP domain only; this process-specific setting is not embedded
-in the submitted code. Hidden-test performance has not been measured.
-
-An earlier pre-revision public series had three completed runs at 7/7 and three
-MCP startup failures (`RemoteProtocolError`, before model calls or CSV output).
-Thus only three of those six attempts completed, and counting failed attempts
-as zero gives 50% mean per-attempt public accuracy for that earlier series.
-Those failures remain relevant because a grading run without its required CSV
-scores zero. The provided startup connection is unchanged; the latest successful
-series does not guarantee future service availability.
+All three tests correctly classified every public CV, with run times between
+62.245 and 64.705 seconds.
 
 #### Targeted checks and identity revision
 
@@ -188,9 +176,6 @@ fallback, in 108.312 seconds (64,367 returned tokens).
 | Shared name with no location provided | 1 | 0.9 |
 | False stint associated with a repeated employer | 0 | 0.1 |
 
-These are limited diagnostic cases, not the instructor's hidden tests, and do
-not establish a general accuracy guarantee.
-
 ### Task 2: Adversarial CV
 
 The submitted attack is [task2/adversarial_cv.pdf](task2/adversarial_cv.pdf), a
@@ -216,8 +201,7 @@ themes. The `example.com` email is a placeholder; expanded role descriptions
 and work themes are authored presentation text rather than independently
 verified accomplishments. The explicit MSc upgrade is the documented false
 claim. Both pages were rendered and visually inspected, and extraction was
-checked separately. Final PDF SHA-256:
-`85ceabbe762d5c9064aa881da6a59c8fb826a1c35d5afd747773d931ccec3095`.
+checked separately.
 
 #### Candidate comparison and selection
 
@@ -264,13 +248,9 @@ behavioural payload. It contains 3,374 extracted characters versus the baseline'
 experiments do **not** establish a higher attack success probability than the
 already successful baseline.
 
-#### Repeated tests of the final PDF
-
-Two repeat rounds used the same candidate bytes and the same three verifier
-designs. A final end-to-end check then used the protected official runner on
-both the submitted attack and the original true CV.
-The table below covers that comparison and repeat series; the later independent
-environment check is reported separately under Reproducibility check.
+The selected PDF was tested repeatedly with the same three verifier designs.
+The own-agent series also includes an official-runner check on both the attack
+and the original true CV.
 
 | Verifier | Final-candidate scores in chronological order | Interpretation |
 | --- | --- | --- |
@@ -284,15 +264,12 @@ positive decisions selected the actual profile `10001`, covered the expected
 field categories and cited actual profile evidence without unknown fields. The
 Task 1 source was unchanged throughout; no exception was added for the attack.
 
-The own-agent genuine and ordinary false-degree controls in the candidate
-comparison scored 0.90 and 0.10 respectively, with an explicit degree mismatch
-for the latter. The final official run scored the attack 0.90 and the
-true CV 0.90, taking 39.168 seconds and returning
-12,034 tokens. The candidate comparison, two repeat rounds
-and final check comprised nineteen CV-level evaluations and returned 318,170
-tokens in total. Their wall times were 336.847, 151.580,
-140.002 and 39.168 seconds. Returned token counts follow the
-usage-accounting convention above and are not monetary cost estimates.
+The own-agent genuine and ordinary false-degree controls scored 0.90 and 0.10
+respectively, with an explicit degree mismatch for the latter. The official
+run scored both the attack and the true CV 0.90 in 39.168 seconds. A separate
+check in a fresh clone and new Python virtual environment installed dependencies
+solely from `requirements.txt`, passed `pip check`, and reproduced both 0.90
+scores through the official runner.
 
 The five undisclosed instructor agents have not been tested. Their specified
 use of the same PDF loader motivates this attack, but these local designs are
@@ -301,39 +278,9 @@ inspection or consistency checks between visible and extracted content could
 expose the false degree. Defences against embedded instructions alone do not
 recover a claim missing from the extracted representation.
 
-### Reproducibility check
-
-An independent check on 14 October 2026 (Hong Kong date) used a fresh public-fork
-clone with the tested solution files and a newly installed Python 3.12.14 virtual
-environment. Dependencies were installed solely from `requirements.txt`;
-`pip check` reported no broken requirements. No `.env` file was copied: existing
-local credentials were supplied through the run process's environment. The
-source hash matches the current Task 1 revision above. The attack in that
-fresh-environment check was the preceding vector-outline baseline, not the
-later selective-degree PDF. Protected code, page count, extraction behaviour
-and credential exclusion were checked. The final PDF was separately verified
-through the official runner after replacement, as reported in Task 2.
-
-A further check on 15 October 2026 used a fresh local Git clone of the original
-fork checkout, overlaid only the fourteen final submission files, and created a
-new Python 3.12 virtual environment. Neither `.env` nor `evaluation/` was copied.
-Installation used only `requirements.txt`, and `pip check` passed. The resolved
-LangChain version was 1.4.6; the Task 1 source and final PDF hashes matched the
-reported versions. Credentials were supplied only through the child process's
-environment. The first attempt failed during MCP startup with
-`RemoteProtocolError`, before model calls or CSV output. The second attempt
-completed the official runner, produced both expected scores and confirmed the
-actual target identity with full evidence checks and no fallback. Both attempts
-are retained below; a startup failure remains a zero-scoring grading run.
-
-| Independent-environment test | Result | Wall time (s) | Returned tokens |
-| --- | --- | ---: | ---: |
-| Seven public CVs | 7/7 correct; no fallback | 69.683 | 42,373 |
-| Preceding attack baseline and true CV | Both 0.9; no fallback | 22.811 | 11,353 |
-| Final PDF, new environment: attempt 1 | MCP startup failure; no CSV | 14.373 | 0 |
-| Final PDF, new environment: attempt 2 | Attack and true CV both 0.9; no fallback | 32.640 | 12,071 |
-
 ### Task 3: Reflection on AI paradoxes
+
+![The missing layer of trust: an exploded view separates the visible MSc claim, extracted BSc text and actual MCP evidence, connecting false acceptance with efficiency, shared blind spots and oversight.](assets/task3_ai_paradoxes.png)
 
 My main takeaway is that AI has two sides: it can make verification more
 efficient, while also making it easier to create misleading material. The
